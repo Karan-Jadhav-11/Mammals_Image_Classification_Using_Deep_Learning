@@ -3,4 +3,5 @@ Flask-Cors
 numpy
 Pillow
 tensorflow==2.18.0
+gunicorn
 -e .
