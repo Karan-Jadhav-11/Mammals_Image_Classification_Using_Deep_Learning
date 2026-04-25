@@ -1,412 +1,440 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Mammal Classification</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --secondary: #6366f1;
-            --bg-dark: #0f172a;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
+            --bg-body: #111827; /* Dark navy/slate background */
+            --bg-panel: #1F2937; /* Lighter slate for panels */
+            --bg-box: #111827; /* Dark background for inner boxes */
+            
+            --text-title: #818CF8; /* Light purple/blue for main title */
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+            
+            --btn-blue: #6366F1; /* Upload button */
+            --btn-blue-hover: #4F46E5;
+            --btn-green: #10B981; /* Predict button */
+            --btn-green-hover: #059669;
+            
+            --result-text: #60A5FA; /* Blue text for prediction result */
+            
+            --border-color: rgba(255,255,255,0.05);
         }
 
         body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.15) 0px, transparent 50%);
+            background-color: var(--bg-body);
             font-family: 'Outfit', sans-serif;
             color: var(--text-main);
             min-height: 100vh;
             margin: 0;
-            overflow-x: hidden;
-        }
-
-        .main-container {
-            padding-top: 50px;
-            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
         }
 
         .header-title {
             font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            font-weight: 800;
+            background: linear-gradient(135deg, #818CF8 0%, #C084FC 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 40px;
             text-align: center;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
+            text-shadow: 0 10px 30px rgba(129, 140, 248, 0.2);
         }
 
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
+        .app-container {
+            display: flex;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .panel {
+            background-color: var(--bg-panel);
+            border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-        }
-
-        .upload-section {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            flex: 1;
+            min-width: 350px;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
         .image-preview-container {
             width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1;
-            border: 2px dashed var(--glass-border);
-            border-radius: 20px;
+            aspect-ratio: 4/3;
+            background-color: #E5E7EB;
+            border-radius: 16px;
             overflow: hidden;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,0.2);
-            position: relative;
-            margin-bottom: 25px;
         }
 
         .image-preview-container img, .image-preview-container video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background-color: #E5E7EB;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: auto;
         }
 
         .btn-custom {
-            padding: 12px 28px;
+            padding: 14px 24px;
             border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 700;
             font-size: 0.9rem;
-        }
-
-        .btn-primary-custom {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
             color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
         }
 
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
-            color: white;
+        .btn-upload {
+            background-color: var(--btn-blue);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+        .btn-upload:hover {
+            background-color: var(--btn-blue-hover);
         }
 
-        .btn-success-custom {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        .btn-predict {
+            background-color: var(--btn-green);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        }
+        .btn-predict:hover {
+            background-color: var(--btn-green-hover);
         }
 
-        .btn-success-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
-            color: white;
-        }
-
-        .result-panel {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .result-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
+        /* Right Panel - Results */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 25px;
             color: var(--text-main);
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
         }
 
-        .prediction-box {
-            background: rgba(0,0,0,0.3);
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-box {
+            background-color: var(--bg-box);
             border-radius: 16px;
             padding: 20px;
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--border-color);
         }
 
-        .prediction-label {
-            font-size: 1rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
+        .box-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .thumbnail-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .thumbnail-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .prediction-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #60a5fa;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--result-text);
+            text-align: center;
+            word-break: break-word;
+            margin: auto 0;
         }
 
-        #loading {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: var(--primary);
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .similar-images-container {
+        /* Similar Images Section */
+        #findSimilarBtn {
             margin-top: 30px;
-            background: var(--glass);
-            border-radius: 20px;
+            background-color: transparent;
+            border: 2px solid var(--btn-blue);
+            color: var(--btn-blue);
+            width: 100%;
+        }
+        #findSimilarBtn:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        #similarImagesSection {
+            display: none;
+            margin-top: 30px;
+            background-color: var(--bg-box);
+            border-radius: 16px;
             padding: 20px;
+            border: 1px solid var(--border-color);
         }
 
         .similar-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
             margin-top: 15px;
         }
 
         .similar-item {
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            border: 1px solid var(--glass-border);
-            transition: transform 0.3s ease;
-        }
-
-        .similar-item:hover {
-            transform: scale(1.05);
+            aspect-ratio: 1;
+            background-color: #2D3748;
         }
 
         .similar-item img {
             width: 100%;
-            height: 100px;
+            height: 100%;
             object-fit: cover;
         }
 
-        .modal-content {
-            background: #1e293b;
-            color: white;
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
+        /* Loader */
+        #loading {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(17, 24, 39, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-bottom-color: var(--btn-blue);
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .modal-header { border-bottom: 1px solid var(--glass-border); }
-        .modal-footer { border-top: 1px solid var(--glass-border); }
-        
-        .form-control {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--glass-border);
+        /* Modal styling */
+        .modal-content {
+            background-color: var(--bg-panel);
             color: white;
-            border-radius: 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .modal-header { 
+            border-bottom: 1px solid var(--border-color); 
+            padding: 24px 30px;
+        }
+        .modal-body {
+            padding: 30px;
+        }
+        .modal-footer { 
+            border-top: 1px solid var(--border-color); 
+            padding: 20px 30px;
+        }
+        .form-control {
+            background-color: var(--bg-box);
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 16px;
         }
         .form-control:focus {
-            background: rgba(0,0,0,0.3);
+            background-color: var(--bg-box);
             color: white;
-            border-color: var(--primary);
-            box-shadow: none;
+            border-color: var(--btn-blue);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
         }
-
+        .close { 
+            color: white; 
+            text-shadow: none; 
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+        .close:hover { 
+            color: white; 
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
     <div id="loading"><span class="loader"></span></div>
     
-    <div class="container main-container">
-        <h1 class="header-title">Mammal Classification</h1>
-        
-        <div class="row g-4">
-            <!-- Left Side: Upload -->
-            <div class="col-lg-6">
-                <div class="glass-card h-100">
-                    <div class="upload-section">
-                        <div class="image-preview-container">
-                            <video autoplay id="video" poster="https://img.freepik.com/free-vector/group-young-people-posing-photo_52683-18824.jpg?size=338&ext=jpg"></video>
-                            <img src="" id="photo" style="display:none;">
-                            <canvas style="display:none;" id="canvas"></canvas>
-                        </div>
-                        
-                        <div class="d-flex gap-3 mt-2 w-100 justify-content-center">
-                            <button type="button" class="btn btn-custom btn-primary-custom mx-2" id="uload">Upload Image</button>
-                            <button id="send" type="button" class="btn btn-custom btn-success-custom mx-2">Predict Species</button>
-                        </div>
-                        
-                        <input type="hidden" id="url" value="../predict"/>
-                        <input name="upload" type="file" id="fileinput" style="display:none;"/>
+    <h1 class="header-title">Mammal Classification</h1>
+
+    <div class="app-container">
+        <!-- Left Panel -->
+        <div class="panel">
+            <div class="image-preview-container">
+                <video autoplay id="video" poster="/static/collage.jpg"></video>
+                <img src="" id="photo" style="display:none;">
+                <canvas style="display:none;" id="canvas"></canvas>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="btn-custom btn-upload" id="uload">UPLOAD IMAGE</button>
+                <button id="send" type="button" class="btn-custom btn-predict">PREDICT SPECIES</button>
+            </div>
+            
+            <input type="hidden" id="url" value="../predict"/>
+            <input name="upload" type="file" id="fileinput" style="display:none;"/>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel">
+            <div class="section-title">Analysis Results</div>
+            
+            <div class="results-grid">
+                <!-- Input Image Box -->
+                <div class="result-box">
+                    <div class="box-label">Input Image</div>
+                    <div class="thumbnail-container" id="inputThumbnail">
+                        <span class="text-muted small" style="margin:auto">No image</span>
                     </div>
+                </div>
+                
+                <!-- Prediction Box -->
+                <div class="result-box">
+                    <div class="box-label">Detected Species</div>
+                    <div class="prediction-value" id="predictionResult">---</div>
                 </div>
             </div>
 
-            <!-- Right Side: Results -->
-            <div class="col-lg-6">
-                <div class="glass-card h-100 result-panel">
-                    <h2 class="result-title">Analysis Results</h2>
-                    
-                    <div class="row h-100">
-                        <div class="col-md-5 mb-3 mb-md-0">
-                            <div id="inputImagePreview" class="prediction-box" style="padding: 10px;">
-                                <span class="prediction-label">Input Image</span>
-                                <div class="res-part2" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                                    <p class="text-muted">No image uploaded</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div class="prediction-box">
-                                <span class="prediction-label">Detected Species</span>
-                                <div class="res-part">
-                                    <div class="prediction-value">---</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <button id="findSimilarBtn" class="btn-custom" style="display: none;">FIND SIMILAR MATCHES</button>
 
-                    <!-- Similar Images Section -->
-                    <div id="similarImagesSection">
-                        <div class="similar-images-container mt-4">
-                            <div class="d-flex justify-content-between align-items: center; margin-bottom: 10px;">
-                                <h5 class="mb-0" style="font-weight: 600;">Similar Matches</h5>
-                                <button id="showMoreBtn" class="btn btn-link btn-sm p-0 text-info">View More</button>
-                            </div>
-                            <div id="similarImagesGrid" class="similar-grid"></div>
-                        </div>
+            <!-- Similar Images Section -->
+            <div id="similarImagesSection">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h5 style="margin:0; font-size: 1rem; font-weight: 600;">Similar Matches</h5>
+                    <button id="showMoreBtn" style="background:none; border:none; color:var(--btn-blue); font-size:0.85rem; cursor:pointer;">View More</button>
+                </div>
+                <div id="similarImagesGrid" class="similar-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="countModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold" style="font-size: 1.2rem;">Database Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-muted); margin-bottom: 15px;">How many similar images would you like to retrieve?</p>
+                    <div class="form-group mb-0">
+                        <input type="number" class="form-control" id="imgCountInput" value="5" min="1" max="50">
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-white" data-dismiss="modal" style="background-color: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 20px; font-weight: 600;">Cancel</button>
+                    <button type="button" class="btn text-white" id="confirmCount" style="background-color: var(--btn-blue); border:none; border-radius: 10px; padding: 10px 24px; font-weight: 600; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);">Search</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
-    var mybtn = document.getElementById('startbtn');
     var myvideo = document.getElementById('video');
     var mycanvas = document.getElementById('canvas');
     var myphoto = document.getElementById('photo');
     var base_data = "";
-    var currentPrediction = "";
 
     function sendRequest(base64Data){
-        var type = "json";
         if(base64Data != "" || base64Data != null){
-            if(type == "imgtobase"){
-                $(".res-part").html("");
-                $(".res-part").html(base64Data);
-            }
-            else if(type == "basetoimg"){
-                var imageData = $("#imgstring").val();
-                $(".res-part").html("");
-                $(".res-part").append("<img src='data:image/jpeg;base64," + imageData + "' alt='' />");
-            }
-            else{
-                var url = $("#url").val();
-                $("#loading").show();
-                $.ajax({
-                    url : url,
-                    type: "post",
-                    cache: false,
-                    async: true,
-                    crossDomain: true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin':'*'
-                    },
-                    data:JSON.stringify({image:base64Data}),
-                    success: function(res){
-                        $(".res-part").html("");
-                        $(".res-part2").html("");
-                        try{
-                            // Display input image in left rectangle
-                            var inputImage = $('#photo').attr('src');
-                            $(".res-part2").append("<img class='resp-img' src='" + inputImage + "' alt='Input Image' style='max-width:100%; border-radius:12px;' />");
-                           
-                            // Display prediction results
-                            if(res && res[0]) {
-                                currentPrediction = res[0];
-                                // Extract class name if the response is an object or string
-                                let displayVal = (typeof res[0] === 'object') ? (res[0].image || JSON.stringify(res[0])) : res[0];
-                                
-                                var predictionHTML = '<div class="prediction-value">' + displayVal + '</div>';
-                                $(".res-part").html(predictionHTML);
-                                
-                                // Ask if user wants to see similar images
-                                $('#similarImagesModal').modal('show');
-                            } else {
-                                $(".res-part").html('<div class="text-muted">No result</div>');
-                            }
-                        } catch(e) {
-                            console.error("Error processing response:", e);
-                            $(".res-part").html('<div class="text-danger">Error</div>');
+            var url = $("#url").val();
+            $("#loading").show();
+            $.ajax({
+                url : url,
+                type: "post",
+                cache: false,
+                async: true,
+                crossDomain: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin':'*'
+                },
+                data:JSON.stringify({image:base64Data}),
+                success: function(res){
+                    try{
+                        var inputImage = $('#photo').attr('src');
+                        $("#inputThumbnail").html("<img src='" + inputImage + "' alt='Input' />");
+                        
+                        if(res && res[0]) {
+                            let displayVal = (typeof res[0] === 'object') ? (res[0].image || JSON.stringify(res[0])) : res[0];
+                            $("#predictionResult").text(displayVal);
+                            $('#findSimilarBtn').fadeIn();
+                            
+                            setTimeout(function() {
+                                $('#countModal').modal('show');
+                            }, 500);
+                        } else {
+                            $("#predictionResult").html('<span style="font-size:1rem;color:#EF4444;">No result</span>');
                         }
-                        $("#loading").hide();
-                    },
-                    error: function(xhr, status, error) {
-                        $(".res-part").html('<div class="text-danger">Error: ' + error + '</div>');
-                        $("#loading").hide();
+                    } catch(e) {
+                        $("#predictionResult").html('<span style="font-size:1rem;color:#EF4444;">Error</span>');
                     }
-                });
-            }
+                    $("#loading").hide();
+                },
+                error: function(xhr, status, error) {
+                    $("#predictionResult").html('<span style="font-size:1rem;color:#EF4444;">Analysis Failed</span>');
+                    $("#loading").hide();
+                }
+            });
         }
     }
 
     function loadSimilarImages(numImages) {
         $("#loading").show();
-        
         $.ajax({
             url: "/get_similar_images",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({
-                num_images: numImages
-            }),
+            data: JSON.stringify({ num_images: numImages }),
             success: function(response) {
                 if (response.success) {
                     displaySimilarImages(response.similar_images);
                 } else {
-                    $('#similarImagesGrid').html('<p class="text-danger">Error: ' + response.message + '</p>');
-                    $('#similarImagesSection').show();
+                    $('#similarImagesGrid').html('<p style="color:#EF4444;">Error: ' + response.message + '</p>');
+                    $('#similarImagesSection').fadeIn();
                 }
                 $("#loading").hide();
             },
-            error: function(xhr, status, error) {
-                $('#similarImagesGrid').html('<p class="text-danger">Error loading images</p>');
-                $('#similarImagesSection').show();
+            error: function() {
+                $('#similarImagesGrid').html('<p style="color:#EF4444;">Search Failed</p>');
+                $('#similarImagesSection').fadeIn();
                 $("#loading").hide();
             }
         });
@@ -415,29 +443,22 @@
     function displaySimilarImages(images) {
         var grid = $('#similarImagesGrid');
         grid.empty();
-        
         if (!images || images.length === 0) {
-            grid.html('<p class="text-muted">No similar matches found</p>');
-            $('#similarImagesSection').show();
+            grid.html('<p style="color:#9CA3AF;font-size:0.85rem;">No matches found</p>');
+            $('#similarImagesSection').fadeIn();
             return;
         }
-        
         images.forEach(function(imgPath, index) {
-            let cleanPath = imgPath.replace(/^\/+/, '');
-            cleanPath = cleanPath.replace(/ /g, '%20');
+            let cleanPath = imgPath.replace(/^\/+/, '').replace(/ /g, '%20');
             var imgUrl = '/static/' + cleanPath;
-            
             grid.append(`
                 <div class="similar-item">
-                    <img src="${imgUrl}" alt="Match ${index + 1}" 
-                         onerror="this.src='https://via.placeholder.com/150?text=Not+Found'">
+                    <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/150?text=Error'">
                 </div>
             `);
         });
-        
-        $('#similarImagesSection').show();
+        $('#similarImagesSection').fadeIn();
     }
-
 
     $(document).ready(function(){
         $("#loading").hide();
@@ -449,7 +470,22 @@
         $('#uload').click(function(evt) {
             $('#fileinput').focus().trigger('click');
         });
-       
+
+        $('#findSimilarBtn').click(function() {
+            $('#countModal').modal('show');
+        });
+
+        $('#showMoreBtn').click(function() {
+            $('#countModal').modal('show');
+        });
+
+        $('#confirmCount').click(function() {
+            var count = $('#imgCountInput').val();
+            if (count < 1) count = 1;
+            $('#countModal').modal('hide');
+            loadSimilarImages(count);
+        });
+
         $("#fileinput").change(function(){
             if (this.files && this.files[0]){
                 var reader = new FileReader();
@@ -464,38 +500,19 @@
                         canvas.width = this.width;
                         ctx.drawImage(this, 0, 0);
                         base_data = canvas.toDataURL('image/jpeg', 1.0).replace(/^data:image.+;base64,/, '');
-                        canvas = null;
                     };
                     img.src = url;
-                    $('#photo').attr('src', url);
-                    $('#photo').show();
+                    $('#photo').attr('src', url).show();
                     $('#video').hide();
-                   
-                    // Clear previous results when new image is uploaded
-                    $(".res-part").html('<div class="result-container"><div class="prediction-text">Prediction</div></div>');
-                    $(".res-part2").html("Uploaded");
+                    $("#predictionResult").html('<span style="color: #9CA3AF;">---</span>');
+                    $("#inputThumbnail").html('<img src="' + url + '" style="width:100%; height:100%; object-fit:contain; border-radius:8px;">');
                     $('#similarImagesSection').hide();
+                    $('#findSimilarBtn').hide();
                 }
                 reader.readAsDataURL(this.files[0]);
             }
         });
-
-        // Handle similar images confirmation
-        $('#confirmSimilarImages').click(function() {
-            var numImages = $('#numImagesInput').val();
-            if (numImages < 1) numImages = 1;
-            if (numImages > 20) numImages = 20;
-            
-            $('#similarImagesModal').modal('hide');
-            loadSimilarImages(numImages);
-        });
-
-        // Show more similar images
-        $('#showMoreBtn').click(function() {
-            var currentCount = $('#similarImagesGrid .similar-image-item').length;
-            loadSimilarImages(currentCount + 5);
-        });
     });
     </script>
 </body>
-</html>
+</html>
