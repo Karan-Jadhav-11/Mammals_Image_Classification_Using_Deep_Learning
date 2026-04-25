@@ -1,11 +1,12 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
 import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+os.putenv('LANG', 'en_US.UTF-8')
+os.putenv('LC_ALL', 'en_US.UTF-8')
+
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS, cross_origin
 from ai_utils.utils import decodeImage
 from prediction.predict import DogCat
-
-os.putenv('LANG', 'en_US.UTF-8')
-os.putenv('LC_ALL', 'en_US.UTF-8')
 
 app = Flask(__name__)
 CORS(app)
