@@ -18,7 +18,7 @@ class DogCat:
             'walrus', 'warthog', 'water_buffalo', 'weasel', 'wildebeest', 'wombat', 'yak', 'zebra'
         ]
         # Load the model and database
-        self.model = load_model(os.path.join("model", "best_model_weights.keras"))
+        self.model = load_model(os.path.join("model", "best_model_weights.keras"), compile=False)
         database_path = os.path.join("model", "image_database.pkl")
         with open(database_path, 'rb') as f:
             self.database = pickle.load(f)
