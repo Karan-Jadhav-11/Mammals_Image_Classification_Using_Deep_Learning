@@ -70,6 +70,7 @@ def get_similar_images():
 def serve_static(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
+clApp = ClientApp()
+
 if __name__ == "__main__":
-    clApp = ClientApp()
     app.run(host='0.0.0.0', port=5000, debug=True)
